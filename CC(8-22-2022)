@@ -1,0 +1,84 @@
+
+
+public class ChessGame
+{
+    public static void main(String[] args) {
+
+        
+        String chessPiece[] = {"Pawn", "Knight", "Bishop", "Rook", "Queen", "King"};
+        
+        canMove("Rook", "A8", "H8"); //true
+        canMove("Bishop", "A7", "G1"); //true
+        canMove("Bishop", "G4", "E2");
+        canMove("Queen", "C4", "D6"); //false
+        canMove("Knight", "C2", "B4");
+        canMove("King", "C2", "E3"); //false
+        canMove("Pawn", "C2", "C3");
+    }
+    
+    public static void canMove(String piece, String startPos, String endPos){
+        String horizontal[] = {"A","B","C","D","E","F","G","H"};
+        int posStart, endStart, moveFromStart;
+        String correctEnd;
+        boolean rightFlag = false;
+        
+        String start[] = startPos.split("");
+        String end[] = endPos.split("");
+        
+        // filter out any move not from 1-8
+        if(Integer.parseInt(start[1]) <8 || Integer.parseInt(start[1]) >0) {
+            if((Integer.parseInt(end[1]) <8 || Integer.parseInt(end[1]) >0)){
+                
+                // start
+                switch (piece.toLowerCase()){
+                    case "pawn":
+                        if(start[0].equals("H")) break; 
+                        if(start[0].equals(end[0]) && (Integer.parseInt(end[1])-Integer.parseInt(start[1])) == 1) rightFlag = true; 
+                        break;
+                    case "knight":
+                        int spacing = Integer.parseInt(end[1])-Integer.parseInt(start[1]); 
+                        posStart = indexOf(horizontal, start[0]); 
+                        if(spacing == 2 || spacing == -2){         
+                            if((horizontal[posStart+1].equals(end[0]) && !horizontal[posStart].equals("H")) || (horizontal[posStart-1].equals(end[0]) && !horizontal[posStart].equals("A"))) rightFlag = true;
+                        } else if (spacing == 1 || spacing == -1) 
+                            if(horizontal[posStart+2].equals(end[0])) rightFlag = true;
+                        
+                        break;
+                    case "bishop":
+                        moveFromStart = Math.abs(Integer.parseInt(end[1])-Integer.parseInt(start[1]));
+                        posStart = indexOf(horizontal, start[0]);
+                        endStart = indexOf(horizontal, end[0]);
+                        if (posStart < endStart) correctEnd = horizontal[posStart + moveFromStart];  
+                        else correctEnd = horizontal[posStart - moveFromStart]; 
+                        if(end[0].equals(correctEnd)) rightFlag = true;
+                        break;
+                    case "rook":
+                        if (start[0].equals(end[0]) || start[1].equals(end[1])) rightFlag = true; 
+                        break;
+                    case "queen":
+                        if (start[0].equals(end[0]) || start[1].equals(end[1])) rightFlag = true;
+                        moveFromStart = Math.abs(Integer.parseInt(end[1])-Integer.parseInt(start[1]));
+                        posStart = indexOf(horizontal, start[0]);
+                        endStart = indexOf(horizontal, end[0]);
+                        if (posStart < endStart) correctEnd = horizontal[posStart + moveFromStart];  
+                        else correctEnd = horizontal[posStart - moveFromStart]; 
+                        if(end[0].equals(correctEnd)) rightFlag = true;
+                        break;
+                    case "king":  
+                        int spacingNumber = Integer.parseInt(end[1]) - Integer.parseInt(start[1]);
+                        int spacingLetter = indexOf(horizontal, end[0]) - indexOf(horizontal, start[0]);  
+                        if (Math.abs(spacingNumber)==1 && Math.abs(spacingLetter)==1) rightFlag = true;
+                        if ((Math.abs(spacingNumber)==1 && Math.abs(spacingLetter)==0) || (Math.abs(spacingNumber)==0 && Math.abs(spacingLetter)==1)) rightFlag = true;
+                        break;
+                }
+            }
+        }
+        System.out.println(piece + "  " +startPos + " - " + endPos + " --- result: " + rightFlag);
+    }
+    public static int indexOf (String arr[], String item){
+        int index = -1;
+        for(int i=0; i<arr.length; i++){
+            if (arr[i].equals(item)) index = i;
+        }
+        return index;
+    }
